@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String          @id @default(uuid())
+  email        String          @unique
+  name         String
+  password     String
+  profilePic   String          @default("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png")
+  message      Message[]
+  chats        User_Chats[]
+  groups       User_Groups[]
+}
+
+enum MessageType{
+  IMAGE
+  TEXT
+  VIDEO
+  VOICE 
+}
+
+model Message{
+  id            String        @id @default(uuid())
+  user          User          @relation(fields: [userId], references: [id])
+  userId        String
+  group         Group?        @relation(fields: [groupId], references: [id])
+  groupId       String?
+  chat          Chat?         @relation(fields: [chatId], references: [id])
+  chatId        String?
+  type          MessageType     
+  content       String
+  sentAt        DateTime
+  deliveredAt   DateTime
+  SeenAt        DateTime
+ }
+
+model Group{
+  id             String        @id @default(uuid())
+  name           String
+  description    String?
+  profilePic     String        @default("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png")
+  message        Message[]
+  userGroups     User_Groups[]
+}
+
+model Chat{
+  id             String       @id @default(uuid())
+  name           String?
+  message        Message[]
+  userChat       User_Chats[]
+}
+
+model User_Chats{
+  id             String       @id @default(uuid())
+  user           User         @relation(fields: [userId], references: [id])
+  userId         String
+  chat           Chat         @relation(fields: [chatId], references: [id])
+  chatId         String
+}
+
+model User_Groups{
+  id              String      @id @default(uuid())
+  group           Group       @relation(fields: [groupId], references: [id])
+  groupId         String
+  user            User        @relation(fields: [userId], references: [id])
+  userId          String
+}
+
+
+
+ 
