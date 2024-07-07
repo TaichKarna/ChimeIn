@@ -1,6 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-const initialState = {
+export interface UserState {
+  currentUser : null | object,
+  error: null | string,
+  loading: boolean
+}
+
+const initialState : UserState = {
   currentUser: null,
   error: null,
   loading: false
@@ -50,9 +56,9 @@ export const userSlice = createSlice({
       state.error = action.payload
     },
     signOutSuccess: (state) => {
-      state.currentUser = false,
+      state.currentUser = null,
       state.loading = false,
-      state.error = false
+      state.error = null
     }
   },
 })

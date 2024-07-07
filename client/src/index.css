@@ -1,68 +1,133 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@font-face {
+    font-family: "mulish";
+    src: url("./assets/fonts/Mulish-VariableFont_wght.ttf");
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+@font-face {
+    font-family: "mulish italic";
+    src: url("./assets/fonts/Mulish-Italic-VariableFont_wght.ttf");
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+:root{
+    /* colors */
+    --brand-dark: #001A83 ;
+    --brand-default: #002DE3;
+    --brand-dark-mode: #375FFF;
+    --brand-light: #879FFF;
+    --brand-background: #D2D5F9;
+
+    --neutral-active : #0F182B;
+    --neutral-dark : #152033;
+    --neutral-body : #1B2B4B;
+    --neutral-weak : #A4A4A4;
+    --neutral-disabled : #ADB5BD;
+    --neutral-line : #EDEDED;
+    --neutral-off-white : #F7F7FC;
+    --neutral-white : #FFFFFF;
+
+    --accent-danger : #E94242;
+    --accent-warning : #FDCF41;
+    --accent-success : #2CC069;
+    --accent-safe : #7BCBCF;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+
+
+/* colors */
+
+.gradient-1{
+    background-color: linear-gradient(to right, #D2D5F9, #2C37E1);
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.gradient-2{
+    background-color: linear-gradient(to right, #EC9EFF, #5F2EEA);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+
+.text-brand-dark{
+    color: var(--brand-dark) ;
+}
+
+.text-brand-default{
+    color: var(--brand-default)
+}
+
+.text-brand-dark-mode{
+    color:var(--brand-dark-mode)
+}
+
+.text-brand-light{
+    color:var(--brand-light);
+}
+
+.text-brand-background{
+    color:var(--brand-background)
+}
+
+
+/* text utilites classes */
+.heading-1{
+    font-family: "mulish";
+    font-weight: bold;
+    font-size: 32px;
+}
+
+.heading-2{
+    font-family: "mulish";
+    font-weight: bold;
+    font-size: 24px;
+}
+
+.subheading-1{
+    font-family: "mulish";
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.subheading-2{
+    font-family: "mulish";
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.body-text-1{
+    font-family: "mulish";
+    font-weight: 500;
+    font-size: 14px;
+}
+
+
+.body-text-2{
+    font-family: "mulish";
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.metadata-1{
+    font-family: "mulish";
+    font-weight: 400;
+    font-size: 12px;
+}
+
+.metadata-2{
+    font-family: "mulish";
+    font-weight: 400;
+    font-size: 10px;
+}
+
+.metadata-3{
+    font-family: "mulish";
+    font-weight: 600;
+    font-size: 10px;
+}
+
+
+
+html, body, #root{
+    font-family: "mulish";
 }

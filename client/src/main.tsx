@@ -1,10 +1,35 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { persistor, store } from './redux/store.ts'
+import { Provider } from 'react-redux'
 import './index.css'
+import { PersistGate } from 'redux-persist/integration/react'
+import ThemeProvider from './components/ThemeProvider.tsx'
+import WelcomePage from './pages/WelcomePage.tsx'
+import App from './App.tsx'
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <WelcomePage/>
+  },
+  {
+    path:'/toggle',
+    element: <App/>
+  }
+])
+
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <PersistGate persistor={persistor} loading={null}>
+          <ThemeProvider>
+            <RouterProvider router={router}>
+            </RouterProvider>
+          </ThemeProvider>
+      </PersistGate>
+    </Provider>
   </React.StrictMode>,
 )
