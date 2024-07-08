@@ -8,6 +8,8 @@ import { PersistGate } from 'redux-persist/integration/react'
 import ThemeProvider from './components/ThemeProvider.tsx'
 import WelcomePage from './pages/WelcomePage.tsx'
 import App from './App.tsx'
+import Signup from './pages/Signup.tsx'
+import Singin from './pages/Signin.tsx'
 
 const router = createBrowserRouter([
   {
@@ -17,6 +19,14 @@ const router = createBrowserRouter([
   {
     path:'/toggle',
     element: <App/>
+  },
+  {
+    path: '/signup',
+    element: <Signup/>
+  },
+  {
+    path: '/signin',
+    element: <Singin/>
   }
 ])
 

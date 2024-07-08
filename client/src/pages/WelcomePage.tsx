@@ -15,7 +15,7 @@ export default function WelcomePage(){
                   <Link to="/signup" className="w-full">   
                 <button className="bg-brandDefault text-neutralOffWhite flex justify-center rounded-full hover:bg-brandDark
                 focus:bg-brandDefault focus:shadow-[0px_0px_10px_10px] focus:shadow-brandBackground outline-none
-                py-4 w-full disabled:bg-brandLight md:px-5 dark:bg-brandDarkMode dark:hover:bg-brandDefault ">
+                py-4 w-full disabled:bg-brandLight md:px-5 dark:bg-brandDarkMode dark:hover:bg-brandDefault subheading-2">
                    Start Messaging
                 </button></Link>
                     <p className="body-text-1">Terms & Privacy Policy</p>
