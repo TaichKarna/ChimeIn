@@ -13,6 +13,7 @@ model User {
   name         String
   password     String
   profilePic   String          @default("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png")
+  lastSeen     DateTime       @default(now())
   message      Message[]
   chats        User_Chats[]
   groups       User_Groups[]
@@ -35,9 +36,9 @@ model Message{
   chatId        String?
   type          MessageType     
   content       String
-  sentAt        DateTime
-  deliveredAt   DateTime
-  SeenAt        DateTime
+  sentAt        DateTime?
+  deliveredAt   DateTime?
+  SeenAt        DateTime?
  }
 
 model Group{
@@ -62,6 +63,8 @@ model User_Chats{
   userId         String
   chat           Chat         @relation(fields: [chatId], references: [id])
   chatId         String
+  contactName    String
+  contactId      String
 }
 
 model User_Groups{
@@ -73,5 +76,8 @@ model User_Groups{
 }
 
 
-
- 
+ model User_Friends{
+  id              String     @id @default(uuid())
+  user1           String     
+  user2           String
+ }

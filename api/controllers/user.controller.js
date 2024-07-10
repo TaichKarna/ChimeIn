@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const errorHandler = require('../utils/error')
-const {prisma} = require('../utils/prisma')
+const {prisma} = require('../utils/prisma');
 
 const updateUser = async (req, res, next) => {
     if(req.user.id !== req.params.userId){
@@ -74,7 +74,46 @@ const signOut = (req, res, next) => {
 }
 
 
+const getFriends = async (req, res, next) => {
 
-module.exports.signOut = signOut;
-module.exports.updateUser = updateUser;
-module.exports.deleteUser = deleteUser;
+    if(!req.user){
+        return next(errorHandler(400, "Unauthorized, login first"))
+    }
+
+    try{
+        const friendList = await prisma.user_Friends.findMany({
+            where: {
+                OR: [
+                    {
+                        user1: req.user.id,
+                    },
+                    {
+                        user2: req.user.id
+                    }
+                ]
+            }
+        });
+
+
+        const friendsIds = friendList.map( friend => 
+            friend.user1 === req.user.id ? friend.user2 : friend.user1
+        )
+
+
+        const friendsDetails = await prisma.user.findMany({
+            where: {
+                id: {
+                    in: friendsIds
+                }
+            }
+        })
+
+        res.status(200).json(friendsDetails)
+
+    } catch (error){
+        next(error)
+    }
+}
+
+
+module.exports = { signOut, updateUser, deleteUser, getFriends}

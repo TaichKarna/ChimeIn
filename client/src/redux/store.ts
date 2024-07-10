@@ -6,10 +6,12 @@ import {
 } from 'redux-persist';
 import userReducer from './user/userSlice';
 import themeReducer from './theme/themeSlice';
+import { apiSlice } from '../rtk-query/apiSlice';
 
 const rootReducer = combineReducers({
   user: userReducer,
   theme: themeReducer,
+  [apiSlice.reducerPath] : apiSlice.reducer
 })
 
 const persistConfig = {
@@ -26,7 +28,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false
-    }),
+    }).concat(apiSlice.middleware),
 })
 
 export const persistor = persistStore(store)

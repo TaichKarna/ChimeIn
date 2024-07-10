@@ -6,19 +6,26 @@ import { Provider } from 'react-redux'
 import './index.css'
 import { PersistGate } from 'redux-persist/integration/react'
 import ThemeProvider from './components/ThemeProvider.tsx'
-import WelcomePage from './pages/WelcomePage.tsx'
 import App from './App.tsx'
 import Signup from './pages/Signup.tsx'
 import Singin from './pages/Signin.tsx'
+import RouterRedirector from './components/RouteRedirector.tsx'
+import Toggle from './components/toggle.tsx'
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <WelcomePage/>
+    element: <RouterRedirector/>,
+    children: [
+      {
+        path: '/',
+        element: <App/>
+      }
+    ]
   },
   {
     path:'/toggle',
-    element: <App/>
+    element: <Toggle/>
   },
   {
     path: '/signup',

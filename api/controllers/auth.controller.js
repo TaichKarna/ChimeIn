@@ -20,7 +20,7 @@ const signup = async (req, res, next) => {
                     password:   hashedPassword,
                 }
             })
-            res.json({message: "Signup successful"})
+            res.json(newUser)
         }
         catch (error){
             next(error)

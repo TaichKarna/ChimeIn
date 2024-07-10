@@ -1,20 +1,16 @@
-import { useDispatch } from "react-redux"
-import { toggleTheme } from "./redux/theme/themeSlice";
+import MainWindow from "./pages/MainWindow"
+import Chats from "./pages/ChatWindow"
 
 function App() {
-  const dispatch = useDispatch();
-  const switchTheme = () => {
-    dispatch(toggleTheme());
-  }
-
   return (
-    <>
-        <div className=" bg-white dark:text-white dark:bg-black text-neutralActive">
-          <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. A atque tempora non iure dolorem molestias dicta eum, optio, odit labore cum blanditiis cupiditate in id. Adipisci distinctio a nihil deserunt!</h1>
-          <button onClick={switchTheme} className="">switch</button>
+    <div className="flex flex-nowrap">
+      <div className="min-h-screen  sm:max-w-[400px] w-full">
+        <MainWindow/>
       </div>
-      
-    </>
+      <div className="hidden w-full min-h-screen sm:block">
+        <Chats/>
+      </div>
+    </div>
   )
 }
 

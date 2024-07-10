@@ -3,6 +3,9 @@ const cookieParser = require('cookie-parser')
 const path = require('path')
 const  authRouter = require('./routers/auth.router')
 const userRouter = require('./routers/user.router')
+const inviteRouter = require('./routers/invite.router')
+const chatRouter = require('./routers/chat.route')
+const messageRouter = require('./routers/message.router')
 const app = express();
 
 app.listen(3000,() => {
@@ -17,6 +20,9 @@ app.use(express.urlencoded())
 
 app.use('/api/auth', authRouter)
 app.use('/api/user', userRouter)
+app.use('/api/invite', inviteRouter)
+app.use('/api/chat', chatRouter)
+app.use('/api/message', messageRouter)
 
 app.get('*', (req, res) => {
     res.sendFile(path.join(__location,'client','dist','index.html'));
