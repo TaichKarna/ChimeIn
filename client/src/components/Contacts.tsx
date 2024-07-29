@@ -1,5 +1,5 @@
 import { useGetContactsQuery } from "../rtk-query/apiSlice"
-import { Plus, Search } from "lucide-react"; 
+import { Plus } from "lucide-react"; 
 import { SearchBar } from "./Inputs";
 import { MainContainer, TopHeaderContainer } from "./TopHeader";
 import { ContactCard } from "./Cards";

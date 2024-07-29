@@ -20,8 +20,14 @@ export const apiSlice = createApi({
         }),
         getContacts : builder.query({
             query: () => '/user/friends'
-        })
+        }),
+        getuserchats : builder.mutation({
+            query: () => ({
+                url: '/chat/getuserchats',
+                method: 'GET',
+            }),
+        }),
     })
 })
 
-export const { useSignupMutation, useSigninMutation, useGetContactsQuery} = apiSlice;
+export const { useSignupMutation, useSigninMutation, useGetContactsQuery , useGetuserchatsMutation} = apiSlice;
