@@ -2,6 +2,7 @@ import { SplashScreen, Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { useCallback, useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { COLORS } from "@/constants/theme";
 
 export default function RootLayout() {
 
@@ -26,8 +27,10 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <Stack 
-      screenOptions={{headerShown: false}}>
+      screenOptions={{headerShown: false}} >
         <Stack.Screen name="index" />
+        <Stack.Screen name="home/(tabs)" />
+        <Stack.Screen name="chats"  />
       </Stack>
     </SafeAreaProvider>
   );

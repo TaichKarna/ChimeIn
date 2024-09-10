@@ -34,11 +34,11 @@ export const SIZES = {
     padding: 10,
     padding2: 12,
     padding3: 16,
-
+    padding4: 22,
     ///font sizes
     largeTitle: 50,
     h1: 30,
-    h2: 22,
+    h2: 24,
     h3: 20,
     h4: 18,
    body1: 30,
@@ -60,7 +60,7 @@ export const FONTS = {
     body1: { fontFamily: 'regular', fontSize: SIZES.body1, lineHeight: 36 },
     body2: { fontFamily: 'regular', fontSize: SIZES.body2, lineHeight: 30 },
     body3: { fontFamily: 'regular', fontSize: SIZES.body3, lineHeight: 22 },
-    body4: { fontFamily: 'regular', fontSize: SIZES.body4, lineHeight: 20 },
+    body4: { fontFamily: 'regular', fontSize: SIZES.body4, lineHeight: 24 },
     button: {fontFamily: 'semiBold', fontSize: 16, lineHeight: 30},
     subHeading1: { fontFamily: 'semiBold', fontSize: 18, lineHeight: 30 },
 

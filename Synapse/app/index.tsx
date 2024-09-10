@@ -1,14 +1,12 @@
 import { Text, View, Image, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { startPageL  } from "@/constants/images";
-import { FONTS, SIZES } from "@/constants/theme";
-import { SvgUri } from "react-native-svg";
+import { COLORS, FONTS, SIZES } from "@/constants/theme";
 import Button from "@/components/buttons/Button";
 import { router } from "expo-router";
 
 export default function Index() {
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1, backgroundColor: COLORS.neutralWhite}}>
     <View
         style={{
             flex:1,
@@ -22,7 +20,7 @@ export default function Index() {
             height={SIZES.height * 0.7}
             source={require("../assets/images/illustration.png")}
             style={{
-                marginBottom: 30
+                marginBottom: 50
             }}
         />
         <Text
