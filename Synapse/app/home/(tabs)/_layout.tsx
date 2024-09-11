@@ -2,6 +2,9 @@ import { COLORS, FONTS } from "@/constants/theme"
 import { Tabs, useSegments } from "expo-router"
 import { Text, View } from "react-native"
 import { FontAwesome, Feather, Ionicons } from "@expo/vector-icons"
+import ChatLogo from "@/assets/svgIcons/ChatLogo"
+import MoreLogo from "@/assets/svgIcons/MoreLogo"
+import ContactsLogo from "@/assets/svgIcons/ContactsLogo"
 
 export default function TabLayout(){
     const segment = useSegments()
@@ -41,11 +44,9 @@ export default function TabLayout(){
                                         <FontAwesome name="circle" size={8} color={COLORS.neutralDark}/>
                                     </> 
                                     ) : (
-                                        <Feather
-                                            name="users"
-                                            size={24}
-                                            color={COLORS.neutralActive}
-                                        />
+                                        <ContactsLogo style={{
+                                            color: COLORS.neutralActive
+                                        }}/>
                                     )
                                 }
 
@@ -75,12 +76,9 @@ export default function TabLayout(){
                                         <FontAwesome name="circle" size={8} color={COLORS.neutralDark}/>
                                     </> 
                                     ) : (
-                                        <Ionicons
-                                            name="chatbubble-outline"
-                                            size={24}
-                                            color={COLORS.neutralActive}
-                                            
-                                        />
+                                        <ChatLogo style={{
+                                            color: COLORS.neutralActive
+                                        }}/>
                                     )
                                 }
 
@@ -110,11 +108,9 @@ export default function TabLayout(){
                                         <FontAwesome name="circle" size={8} color={COLORS.neutralDark}/>
                                     </> 
                                     ) : (
-                                        <Feather
-                                            name="more-horizontal"
-                                            size={24}
-                                            color={COLORS.neutralActive}
-                                        />
+                                        <MoreLogo style={{
+                                            color: COLORS.neutralActive
+                                        }}/>
                                     )
                                 }
 
