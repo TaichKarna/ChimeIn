@@ -5,9 +5,12 @@ import { FontAwesome, Feather, Ionicons } from "@expo/vector-icons"
 import ChatLogo from "@/assets/svgIcons/ChatLogo"
 import MoreLogo from "@/assets/svgIcons/MoreLogo"
 import ContactsLogo from "@/assets/svgIcons/ContactsLogo"
+import { useThemeColor } from "@/hooks/useThemeColor"
 
 export default function TabLayout(){
     const segment = useSegments()
+    const txtClr = useThemeColor({}, 'text');
+    const bgBlr = useThemeColor({}, 'background')
     return(
         <Tabs screenOptions={{
             tabBarShowLabel: false,
@@ -15,13 +18,16 @@ export default function TabLayout(){
             tabBarHideOnKeyboard: true,
             tabBarStyle: {
                 position: "absolute",
-                backgroundColor: COLORS.neutralWhite,
+                backgroundColor: bgBlr,
                 bottom: 0,
                 right: 0,
                 left: 0,
                 elevation: 0,
-                height: 60
-            }
+                height: 60,
+                borderWidth: 0,
+                borderTopColor: 'transparent'
+            },
+            
         }}>
             <Tabs.Screen
                 name="contacts"
@@ -36,16 +42,16 @@ export default function TabLayout(){
                                     focused ? (
                                     <>
                                         <Text style={{
-                                            ...FONTS.body3,
-                                            color: COLORS.neutralActive
+                                            ...FONTS.body1,
+                                            color: txtClr
                                         }}>
                                             Contacts
                                         </Text>
-                                        <FontAwesome name="circle" size={8} color={COLORS.neutralDark}/>
+                                        <FontAwesome name="circle" size={8} color={txtClr}/>
                                     </> 
                                     ) : (
                                         <ContactsLogo style={{
-                                            color: COLORS.neutralActive
+                                            color: txtClr
                                         }}/>
                                     )
                                 }
@@ -68,16 +74,16 @@ export default function TabLayout(){
                                     focused ? (
                                     <>
                                         <Text style={{
-                                            ...FONTS.body3,
-                                            color: COLORS.neutralActive
+                                            ...FONTS.body1,
+                                            color: txtClr
                                         }}>
                                             Chats
                                         </Text>
-                                        <FontAwesome name="circle" size={8} color={COLORS.neutralDark}/>
+                                        <FontAwesome name="circle" size={8} color={txtClr}/>
                                     </> 
                                     ) : (
                                         <ChatLogo style={{
-                                            color: COLORS.neutralActive
+                                            color: txtClr
                                         }}/>
                                     )
                                 }
@@ -100,17 +106,19 @@ export default function TabLayout(){
                                     focused ? (
                                     <>
                                         <Text style={{
-                                            ...FONTS.body3,
-                                            color: COLORS.neutralActive
+                                            ...FONTS.body1,
+                                            color: txtClr
                                         }}>
                                             More
                                         </Text>
-                                        <FontAwesome name="circle" size={8} color={COLORS.neutralDark}/>
+                                        <FontAwesome name="circle" size={8} color={txtClr}/>
                                     </> 
                                     ) : (
                                         <MoreLogo style={{
-                                            color: COLORS.neutralActive
-                                        }}/>
+                                            color: txtClr
+                                        }}
+                                            color={txtClr}
+                                        />
                                     )
                                 }
 

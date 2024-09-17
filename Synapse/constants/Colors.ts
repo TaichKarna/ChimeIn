@@ -5,18 +5,26 @@
 
 import { COLORS } from "./theme";
 
+const tintColorLight = '#0a7ea4';
+const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
     text: COLORS.neutralActive,
     background: COLORS.neutralWhite,
-    buttonBg: COLORS.brandDefault,
-    buttonText: COLORS.neutralOffWhite
+    tint: tintColorLight,
+    icon: COLORS.neutralActive,
+    button: COLORS.brandDefault,
+    inputtxt: COLORS.neutralDisabled,
+    inputbg: COLORS.neutralOffWhite
   },
   dark: {
     text: COLORS.neutralOffWhite,
-    background: COLORS.neutralDark,
-    buttonBg: COLORS.brandDarkMode,
-    buttonText: COLORS.neutralOffWhite
+    background: COLORS.neutralActive,
+    tint: tintColorDark,
+    icon: '#9BA1A6',
+    button: COLORS.brandDarkMode,
+    inputbg: COLORS.neutralDark,
+    inputtxt: COLORS.neutralOffWhite
   },
 };

@@ -1,28 +1,37 @@
 import Button from "@/components/buttons/Button";
 import PageTitle from "@/components/PageTitle";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
 import { COLORS, FONTS, SIZES } from "@/constants/theme";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { View, ScrollView, Text, StyleSheet, Image, Modal, TouchableWithoutFeedback, FlatList } from "react-native";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity , Pressable} from "react-native";
 import { TextInput } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-type ContryData = {
-    code: string,
-    name: string,
-    flag: string
-}
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { useColorScheme } from "react-native";
+import auth from '@react-native-firebase/auth'
+import OTPTextInput from 'react-native-otp-textinput'
 
 export default function PhoneNumber(){
     const [modalVisible, setModalVisible] = useState(false);
-    const [country ,setCountry] = useState(null);
+    const [country ,setCountry] = useState<any>(null);
     const [countries, setCountries] = useState([]);
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [confirm, setConfirm] = useState(null);
+    const inputBg = useThemeColor({},'inputbg');
+    const inputtxt = useThemeColor({},'inputtxt')
+    const theme = useColorScheme();
+    const resendClr = theme === 'light' ? COLORS.brandDefault : COLORS.neutralOffWhite;
+
+    console.log(confirm)
 
     useEffect( () => {
         const getData = async() => {
             try{
                 const res = await fetch("https://restcountries.com/v2/all");
+                console.log(res, "res is")
                 const data = await res.json();
                 const countryData = data.map((ele : any) => {
                     return {
@@ -34,7 +43,7 @@ export default function PhoneNumber(){
                 })
                 setCountries(countryData);
                 if(countryData.length > 0){
-                    let defaultData = countryData.filter(a => a.code === "US")
+                    let defaultData = countryData.filter((a : any) => a.code === "US")
     
                     if(defaultData.length > 0) setCountry(defaultData[0]);
 
@@ -48,8 +57,29 @@ export default function PhoneNumber(){
 
     },[])
 
+    const signInWithNumber = async () => {
+        try{
+            const confirmation = await auth().signInWithPhoneNumber(`+${country.callingCodes}${phoneNumber}`);
+            setConfirm(confirmation);
+            console.log(confirmation)
+        } catch(error) {
+            console.log(error)
+        }
+    }
+
+    const confirmCode = async(code: string) => {
+        if(code.length < 6) return;
+        
+        try{
+            await confirm.confirm(code)
+            router.navigate('/profile')
+        }catch(error){
+            console.log(error);
+        }
+    }
+
     function CountryCodeModal(){
-        const renderItems = ({ item } ) => {
+        const renderItems = ({ item } : any ) => {
             return (
                 <TouchableOpacity style={{
                     padding: 10,
@@ -66,7 +96,7 @@ export default function PhoneNumber(){
                             marginRight: 10
                         }}
                     />
-                    <Text style={{ ...FONTS.body3, color: COLORS.neutralOffWhite
+                    <Text style={{ ...FONTS.body2, color: COLORS.neutralOffWhite
                     }}>{item.name}</Text>
                 </TouchableOpacity>
             )
@@ -93,7 +123,7 @@ export default function PhoneNumber(){
                         }}>
                             <FlatList data={countries}
                             renderItem={renderItems}
-                            keyExtractor={(country) => country.code }
+                            keyExtractor={(country : any) => country.code }
                             showsVerticalScrollIndicator={false}
                             />
                         </View>
@@ -104,17 +134,22 @@ export default function PhoneNumber(){
         )
     }
 
-    return(
-        <SafeAreaView style={{flex:1, backgroundColor: COLORS.neutralWhite }}>
+    if(!confirm)
+        return (
+        <SafeAreaView style={{flex:1}}>
+            <ThemedView style={{flex: 1}}>
             <PageTitle onPress={() => router.navigate('/')}/>
             <ScrollView>
                 <View style={{flex:1, alignItems: "center",  marginTop: 80, gap: 8}}>
-                    <Text style={styles.headingText}>
+                    <ThemedText type="h2">
                         Enter Your Phone Number
-                    </Text>
-                    <Text style={{...FONTS.body4, textAlign:"center", marginHorizontal: 50,}}>
+                    </ThemedText>
+                    <ThemedText 
+                        type="body2"
+                        style={{ textAlign:"center", marginHorizontal: 50,}}
+                    >
                         Please Confirm your country code and enter your phone number
-                    </Text>
+                    </ThemedText>
                     <View style={{
                         width: "100%",
                         paddingHorizontal:22,
@@ -158,7 +193,7 @@ export default function PhoneNumber(){
                                 }}>
                                     <Text style={{
                                         color : COLORS.neutralDisabled,
-                                        ...FONTS.body3
+                                        ...FONTS.body2
                                     }}>
                                         {!country ? "+ 1": `+ ${country.callingCodes}`}
                                     </Text>
@@ -169,21 +204,24 @@ export default function PhoneNumber(){
                                 marginVertical: 10,
                                 backgroundColor: COLORS.neutralOffWhite,
                                 color: COLORS.neutralDisabled,
-                                ...FONTS.body3,
+                                ...FONTS.body2,
                                 height: 48,
                                 borderRadius: SIZES.padding,
                                 paddingHorizontal: 10,
                             }}
                             placeholder="Phone Number"
                             keyboardType="numeric"
+                            value={phoneNumber}
+                            onChangeText={setPhoneNumber}
                             />
 
                         </View>
                     </View>
                 </View>
-            <View style={{width: "100%", paddingHorizontal: SIZES.padding4}}>
+            </ScrollView>
+            <View style={{width: "100%", paddingHorizontal: SIZES.padding4, position: 'absolute', bottom: 30}}>
                 <Button title="Continue"
-                onPress={ () => router.navigate("../home")}
+                onPress={ signInWithNumber }
                 style={{
                     width: "100%",
                     alignItems:"center",
@@ -194,17 +232,50 @@ export default function PhoneNumber(){
                     disabled={false}
                 />
             </View>
-            </ScrollView>
             {countries && <CountryCodeModal/> }
+            </ThemedView>
+        </SafeAreaView>
+    )
+
+    return(
+        <SafeAreaView style={{flex: 1}}>
+            <ThemedView style={{flex: 1}}>
+                <PageTitle onPress={() => router.navigate('/')}/>
+                <View style={{flex: 1, alignItems: 'center', marginHorizontal: 22, marginTop: 80}}>
+                    <ThemedText type="h2" style={{marginBottom: 8}}>
+                        Enter Code
+                    </ThemedText>
+                    <ThemedText style={{textAlign: 'center', marginHorizontal: 40}} type="body2">
+                        We have sent you an SMS with the code to
+                    </ThemedText>
+                    <ThemedText type="body2" style={{marginHorizontal: 50}}>
+                        to +91 8888 8888
+                    </ThemedText>
+                    <View style={{
+                        marginVertical: 60
+                    }}>
+                        <OTPTextInput
+                        textInputStyle={{
+                            backgroundColor: inputBg,
+                            borderRadius: 60,
+                            borderBottomWidth: 0,
+                            width: 30,
+                            height: 30,
+                            color: inputtxt
+                        }}
+                        inputCount={6}
+                        handleTextChange={confirmCode}
+                        />
+                    </View>
+                    <Pressable onPress={signInWithNumber}>
+                    <Text style={{color: resendClr, ...FONTS.sh2 }} >
+                        Resend OTP
+                    </Text>
+                </Pressable>
+                </View>
+
+            </ThemedView >
         </SafeAreaView>
     )
 }
 
-const styles = StyleSheet.create({
-    headingText: {
-        ...FONTS.h2,
-        color: COLORS.neutralActive,
-        marginHorizontal: 40,
-    }
-
-})

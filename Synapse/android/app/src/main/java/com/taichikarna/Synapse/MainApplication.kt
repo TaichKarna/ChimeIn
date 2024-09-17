@@ -1,4 +1,4 @@
-package com.anonymous.Synapse
+package com.taichikarna.Synapse
 
 import android.app.Application
 import android.content.res.Configuration

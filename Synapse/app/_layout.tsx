@@ -2,9 +2,11 @@ import { SplashScreen, Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { useCallback, useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { COLORS } from "@/constants/theme";
+import * as Contacts from 'expo-contacts';
+
 
 export default function RootLayout() {
+
 
   const [fontsloaded, error] = useFonts({
     black: require("../assets/fonts/static/Mulish-Black.ttf"),
@@ -24,11 +26,32 @@ export default function RootLayout() {
 
   if(!fontsloaded && !error) return null;
 
+  // useEffect(() => {
+  //   (async () => {
+  //     const { status } = await Contacts.requestPermissionsAsync();
+  //     if (status === 'granted') {
+  //       const { data } = await Contacts.getContactsAsync({
+  //         fields: [Contacts.Fields.Emails],
+  //       });
+
+  //       if (data.length > 0) {
+  //         const contact = data[0];
+  //         console.log(contact);
+  //       }
+  //     }
+  //   })();
+  // }, []);
+
+
+
+
   return (
     <SafeAreaProvider>
       <Stack 
       screenOptions={{headerShown: false}} >
         <Stack.Screen name="index" />
+        <Stack.Screen name="phone-enter" />
+        <Stack.Screen name="profile" />
         <Stack.Screen name="home/(tabs)" />
         <Stack.Screen name="chats"  />
       </Stack>

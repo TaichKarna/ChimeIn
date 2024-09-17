@@ -1,29 +1,34 @@
-import { Text, View, Image, Pressable } from "react-native";
+import { Text, View, Image, Pressable, useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { COLORS, FONTS, SIZES } from "@/constants/theme";
+import {  FONTS, SIZES } from "@/constants/theme";
 import Button from "@/components/buttons/Button";
 import { router } from "expo-router";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
 
 export default function Index() {
+ const theme = useColorScheme() ?? 'light';
+
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: COLORS.neutralWhite}}>
-    <View
+    <SafeAreaView style={{flex: 1}}>
+    <ThemedView
         style={{
             flex:1,
             alignItems: 'center',
             justifyContent: 'center',
-            flexDirection: 'column'
+            flexDirection: 'column',
         }}
     >
         <Image
             width={SIZES.width * 0.7}
             height={SIZES.height * 0.7}
-            source={require("../assets/images/illustration.png")}
+            source={theme === 'light' ? require("../assets/images/illustration.png") : require('../assets/images/welcomeDark.png')}
             style={{
-                marginBottom: 50
+                marginBottom: 30,
+                
             }}
         />
-        <Text
+        <ThemedText
          style = {{
             ...( SIZES.width <= 360 ?
                 {...FONTS.h2}:
@@ -33,7 +38,7 @@ export default function Index() {
             marginHorizontal: SIZES.padding3 * 2
          }}>
             Connect easily with your family and friends over countries
-        </Text>
+        </ThemedText>
         <View style={{
             width: "100%",
             alignItems:"center",
@@ -41,17 +46,17 @@ export default function Index() {
             position: "absolute",
             bottom: 30,
         }}>
-            <Text
+            <ThemedText
             style={{
-                ...FONTS.body4,
                 marginVertical: 12
             }}
+            type="body1"
             >
                 Terms and Privacy Policy
-            </Text>
+            </ThemedText>
             <View style={{width: "100%", paddingHorizontal: SIZES.padding3}}>
                 <Button title="Start Messaging"
-                onPress={ () => router.navigate("/phone-enter")}
+                onPress={ () => router.navigate("/profile")}
                 style={{
                     width: "100%",
                     alignItems:"center",
@@ -62,9 +67,8 @@ export default function Index() {
                     disabled={false}
                 />
             </View>
-
         </View>
-    </View>
+    </ThemedView>
 </SafeAreaView>
   );
 }

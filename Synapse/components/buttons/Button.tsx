@@ -1,12 +1,14 @@
 import { TouchableOpacity } from "react-native"
 import { StyleSheet, View, Text } from "react-native"
 import { COLORS, FONTS, SIZES } from "@/constants/theme"
+import { ThemedText } from "../ThemedText";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 export default function Button(props : any){
-    const enabledBgColor = props.color || COLORS.brandDefault;
+    const btnColor = useThemeColor({},'button')
+    const enabledBgColor = props.color || btnColor;
     const disabledBgColor = COLORS.neutralDisabled;
     const bgColor = props.disabled ? disabledBgColor: enabledBgColor;
-
     return(
         <TouchableOpacity
         onPress={props.onPress}
@@ -15,15 +17,13 @@ export default function Button(props : any){
             backgroundColor: bgColor,
             ...props.style
         }}>
-            <Text
+            <ThemedText
                 style={{
-                    ...FONTS.button,
                     color: props.disabled ? COLORS.brandDefault : COLORS.neutralWhite,
-                    
                 }}
             >
                 {props.title}
-            </Text>
+            </ThemedText>
         </TouchableOpacity>
     )
 }

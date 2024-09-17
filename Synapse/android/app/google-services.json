@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "658828433326",
+    "project_id": "synapse-97444",
+    "storage_bucket": "synapse-97444.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658828433326:android:8001be66ebc47b4ef45a3f",
+        "android_client_info": {
+          "package_name": "com.anonymous.synapse"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdCLDVhcn0SDuFM_QowA0YOyWi2cAzcDk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658828433326:android:4d2b491f7eba8cd8f45a3f",
+        "android_client_info": {
+          "package_name": "com.taichikarna.Synapse"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdCLDVhcn0SDuFM_QowA0YOyWi2cAzcDk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

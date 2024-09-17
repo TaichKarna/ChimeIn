@@ -1,4 +1,4 @@
-package com.anonymous.Synapse
+package com.taichikarna.Synapse
 
 import android.os.Build
 import android.os.Bundle

@@ -13,6 +13,8 @@
   "description": "",
   "dependencies": {
     "@prisma/client": "^5.19.1",
+    "@react-native-firebase/app": "^20.5.0",
+    "@react-native-firebase/auth": "^20.5.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
