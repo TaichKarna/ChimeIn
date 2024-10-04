@@ -1,9 +1,12 @@
-const express = require('express')
-const verifyToken = require('../utils/verifyToken')
-const router = express.Router();
-const { addFriends } = require('../controllers/invite.controller');
+const express = require('express');
+const { sendFriendRequest, respondToFriendRequest, getFriendRequests } = require('../controllers/invite.controller');
+const { verifyToken } = require('../utils/verifyToken')
+const inviteRouter = express.Router();
 
-router.post('/:friendId', verifyToken, addFriends); // add friends from token id and invite id
+inviteRouter.post('/', verifyToken, sendFriendRequest);
 
+inviteRouter.post('/respond', verifyToken, respondToFriendRequest);
 
-module.exports = router
+inviteRouter.get('/:userId', verifyToken, getFriendRequests);
+
+module.exports = { inviteRouter }

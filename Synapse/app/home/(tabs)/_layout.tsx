@@ -30,7 +30,7 @@ export default function TabLayout(){
             
         }}>
             <Tabs.Screen
-                name="contacts"
+                name="friends"
                 options={{
                     tabBarIcon: ({focused}) => {
                         return (
@@ -45,7 +45,7 @@ export default function TabLayout(){
                                             ...FONTS.body1,
                                             color: txtClr
                                         }}>
-                                            Contacts
+                                            Friends
                                         </Text>
                                         <FontAwesome name="circle" size={8} color={txtClr}/>
                                     </> 

@@ -1,119 +1,73 @@
 const bcrypt = require('bcryptjs');
-const errorHandler = require('../utils/error')
-const {prisma} = require('../utils/prisma');
+const errorHandler = require('../utils/error');
+const { prisma } = require('../utils/prisma');
 
 const updateUser = async (req, res, next) => {
-    if(req.user.id !== req.params.userId){
-        return next(errorHandler(403,'You are not allowed to update this user'));
+    if (req.user.id !== req.params.userId) {
+        return next(errorHandler(403, 'You are not allowed to update this user'));
     }
 
     const data = {};
 
-    if(req.body.password){
-        if(req.body.password.length < 6){
-            return next(errorHandler(400,'Password must atleast be 6 characters'));
+    if (req.body.password) {
+        if (req.body.password.length < 6) {
+            return next(errorHandler(400, 'Password must be at least 6 characters'));
         }
-        req.body.password = await bcrypt.hash(req.body.password,10);     
-        data.password = req.body.password; 
+        req.body.password = await bcrypt.hash(req.body.password, 10);
+        data.password = req.body.password;
     }
 
-    if(req.body.name){
-        if(req.body.name.length < 1 || req.body.name.length > 20){
-            return next(errorHandler(400,'Username must be between 1 and 20 characters'));
+    if (req.body.username) {
+        if (req.body.username.length < 1 || req.body.username.length > 20) {
+            return next(errorHandler(400, 'Username must be between 1 and 20 characters'));
         }
-        data.name = req.body.name;
+        data.username = req.body.username;
     }
 
-    if(req.body.profilePic){
-        data.profilePic = req.body.profilePic;
+    if (req.body.displayName) {
+        if (req.body.displayName.length < 1 || req.body.displayName.length > 50) {
+            return next(errorHandler(400, 'Display name must be between 1 and 50 characters'));
+        }
+        data.displayName = req.body.displayName;
+    }
+
+    if (req.body.profilePicture) {
+        data.profilePicture = req.body.profilePicture;
     }
 
     try {
-        const updateUser = await prisma.user.update({
+        const updatedUser = await prisma.user.update({
             where: {
                 id: req.params.userId
             },
             data: data
-        })
+        });
 
-        const {password, ...rest} = updateUser;
+        const { password, ...rest } = updatedUser;
         res.status(200).json(rest);
-        
-    } catch(error){
+    } catch (error) {
         next(error);
     }
-}
-
-
+};
 
 const deleteUser = async (req, res, next) => {
-    if(req.user.id !== req.params.userId ){
-        return next(errorHandler(403,"You are not allowed to delete this user"));
+    if (req.user.id !== req.params.userId) {
+        return next(errorHandler(403, "You are not allowed to delete this user"));
     }
 
     try {
-        const deleteUser = await prisma.user.delete({
+        await prisma.user.delete({
             where: {
                 id: req.params.userId
             }
-        })
-        res.status(200).json("User has been deleted");
-    } catch(error) {
-        next(error);
-    }
-}
-
-
-const signOut = (req, res, next) => {
-    try{
-        res.clearCookie('access_token').status(200).json("User has signout out");
-
-    } catch(error) {
-        next(error);
-    }
-}
-
-
-const getFriends = async (req, res, next) => {
-
-    if(!req.user){
-        return next(errorHandler(400, "Unauthorized, login first"))
-    }
-
-    try{
-        const friendList = await prisma.user_Friends.findMany({
-            where: {
-                OR: [
-                    {
-                        user1: req.user.id,
-                    },
-                    {
-                        user2: req.user.id
-                    }
-                ]
-            }
         });
-
-
-        const friendsIds = friendList.map( friend => 
-            friend.user1 === req.user.id ? friend.user2 : friend.user1
-        )
-
-
-        const friendsDetails = await prisma.user.findMany({
-            where: {
-                id: {
-                    in: friendsIds
-                }
-            }
-        })
-
-        res.status(200).json(friendsDetails)
-
-    } catch (error){
-        next(error)
+        res.status(200).json("User has been deleted");
+    } catch (error) {
+        next(error);
     }
-}
+};
 
 
-module.exports = { signOut, updateUser, deleteUser, getFriends}
+
+
+module.exports = {  updateUser, deleteUser };

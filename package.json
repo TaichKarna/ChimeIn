@@ -12,19 +12,22 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@prisma/client": "^5.19.1",
+    "@prisma/client": "^5.20.0",
     "@react-native-firebase/app": "^20.5.0",
     "@react-native-firebase/auth": "^20.5.0",
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.5.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "firebase-admin": "^12.5.0",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
     "nodemon": "^3.1.4",
     "socket.io": "^4.7.5"
   },
   "devDependencies": {
-    "prisma": "^5.19.1"
+    "prisma": "^5.20.0"
   }
 }

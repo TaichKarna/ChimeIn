@@ -38,9 +38,10 @@
       [
         "expo-contacts",
         {
-          "contactsPermission":  "Allow Synapse to access your contacts"
+          "contactsPermission": "Allow Synapse to access your contacts"
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true

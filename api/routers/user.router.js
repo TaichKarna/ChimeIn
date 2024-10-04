@@ -1,11 +1,9 @@
 const express = require('express')
 const { updateUser, deleteUser, signOut, getFriends} = require('../controllers/user.controller')
-const verifyToken = require('../utils/verifyToken')
-const router = express.Router();
+const { verifyToken } = require('../utils/verifyToken')
+const userRouter = express.Router();
 
-router.put('/update/:userId',verifyToken, updateUser);
-router.delete('/delete/:userId',verifyToken, deleteUser);
-router.post('/signout', signOut);
-router.get('/friends',verifyToken, getFriends)
+userRouter.put('/update/:userId',verifyToken, updateUser);
+userRouter.delete('/delete/:userId',verifyToken, deleteUser);
 
-module.exports = router
+module.exports = { userRouter }

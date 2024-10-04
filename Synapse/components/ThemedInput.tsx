@@ -1,9 +1,9 @@
-import { FONTS, SIZES } from "@/constants/theme";
+import { COLORS, FONTS, SIZES } from "@/constants/theme";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { View, StyleSheet, TextInput, Text } from "react-native";
 import { ThemedText } from "./ThemedText";
 
-export default function ThemedInput(props: any){
+export  function ThemedInput(props: any){
     const inputBg = useThemeColor({},'inputbg')
     const inputTxt = useThemeColor({}, 'inputtxt')
     const inputBackgroundColor = props.inputBackgroundColor || inputBg;
@@ -22,7 +22,7 @@ export default function ThemedInput(props: any){
             </View>{
                 props.errorText && (
                     <View style={styles.errorContainer}>
-                        <ThemedText type="body1">
+                        <ThemedText type="body1" style={styles.errorText}>
                              {props.errorText}
                         </ThemedText>
                     </View>
@@ -47,9 +47,12 @@ const styles = StyleSheet.create({
     input: {
         ...FONTS.body1,
         flex: 1,
-        paddingTop: 0
+        paddingTop: 0,
     },
     errorContainer: {
-
+        paddingLeft: 8
+    },
+    errorText: {
+        color: COLORS.accentDanger
     }
 })

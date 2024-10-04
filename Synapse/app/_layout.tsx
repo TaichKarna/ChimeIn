@@ -1,12 +1,16 @@
 import { SplashScreen, Stack } from "expo-router";
 import { useFonts } from "expo-font";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import * as Contacts from 'expo-contacts';
+import { QueryClient, QueryClientProvider } from "react-query";
 
+let api_url = "http://192.168.29.112:3000/api"
+
+export { api_url }
+
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
-
 
   const [fontsloaded, error] = useFonts({
     black: require("../assets/fonts/static/Mulish-Black.ttf"),
@@ -26,35 +30,15 @@ export default function RootLayout() {
 
   if(!fontsloaded && !error) return null;
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const { status } = await Contacts.requestPermissionsAsync();
-  //     if (status === 'granted') {
-  //       const { data } = await Contacts.getContactsAsync({
-  //         fields: [Contacts.Fields.Emails],
-  //       });
-
-  //       if (data.length > 0) {
-  //         const contact = data[0];
-  //         console.log(contact);
-  //       }
-  //     }
-  //   })();
-  // }, []);
-
-
-
 
   return (
-    <SafeAreaProvider>
+   <QueryClientProvider client={queryClient}>
+     <SafeAreaProvider >
       <Stack 
-      screenOptions={{headerShown: false}} >
-        <Stack.Screen name="index" />
-        <Stack.Screen name="phone-enter" />
-        <Stack.Screen name="profile" />
-        <Stack.Screen name="home/(tabs)" />
-        <Stack.Screen name="chats"  />
+      screenOptions={{headerShown: false}}>
+          <Stack.Screen name="index" />
       </Stack>
     </SafeAreaProvider>
+   </QueryClientProvider>
   );
 }

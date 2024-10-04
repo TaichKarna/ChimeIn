@@ -7,7 +7,7 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 export default function Button(props : any){
     const btnColor = useThemeColor({},'button')
     const enabledBgColor = props.color || btnColor;
-    const disabledBgColor = COLORS.neutralDisabled;
+    const disabledBgColor = useThemeColor({}, 'disabled');
     const bgColor = props.disabled ? disabledBgColor: enabledBgColor;
     return(
         <TouchableOpacity
@@ -19,7 +19,7 @@ export default function Button(props : any){
         }}>
             <ThemedText
                 style={{
-                    color: props.disabled ? COLORS.brandDefault : COLORS.neutralWhite,
+                    color: props.disabled ?COLORS.neutralOffWhite : COLORS.neutralWhite,
                 }}
             >
                 {props.title}

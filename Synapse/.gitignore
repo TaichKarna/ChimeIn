@@ -18,3 +18,7 @@ web-build/
 
 expo-env.d.ts
 # @end expo-cli
+
+
+GoogleService-Info.plist
+google-services.json

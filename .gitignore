@@ -24,3 +24,5 @@ starter
 *.sw?
 .env
 
+FirebaseService.json
+

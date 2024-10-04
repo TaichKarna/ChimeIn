@@ -9,7 +9,7 @@ const ProfileSvg = (props: any) => {
     xmlns="http://www.w3.org/2000/svg"
     width={38}
     height={45}
-    fill="currentColor"
+    fill= {props.fill}
     {...props}
   >
     <Path

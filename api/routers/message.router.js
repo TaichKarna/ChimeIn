@@ -1,9 +1,9 @@
 const express = require('express');
 const { createMessage, getMessages } = require('../controllers/message.controller');
-const router = express.Router();
-const verifyToken = require('../utils/verifyToken')
+const messageRouter = express.Router();
+const { verifyToken } = require('../utils/verifyToken')
 
-router.post('/create',verifyToken, createMessage);
-router.get('/getmessages', verifyToken, getMessages)
+messageRouter.post('/create',verifyToken, createMessage);
+messageRouter.get('/getmessages', verifyToken, getMessages)
 
-module.exports = router
+module.exports = { messageRouter }

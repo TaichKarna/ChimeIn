@@ -8,77 +8,124 @@ datasource db {
 }
 
 model User {
-  id           String          @id @default(uuid())
-  email        String          @unique
-  name         String
-  password     String
-  profilePic   String          @default("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png")
-  lastSeen     DateTime       @default(now())
-  message      Message[]
-  chats        User_Chats[]
-  groups       User_Groups[]
+  id                  String          @id @default(uuid()) // UUID as primary key
+  username            String          @unique
+  email               String          @unique
+  password            String
+  displayName         String?         // Display name (optional)
+  profilePicture      String?         // Profile picture URL (optional)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  // Relations
+  sentMessages        Message[]       @relation("SentMessages")
+  receivedMessages    Message[]       @relation("ReceivedMessages")
+  memberships         Membership[]    
+  messageStatuses     MessageStatus[]
+  sentFriendRequests   FriendRequest[] @relation("Sender")
+  receivedFriendRequests FriendRequest[] @relation("Receiver")
+
+  // Friends relations
+  friends             Friendship[]    @relation("UserToFriends")
+  befriended          Friendship[]    @relation("FriendsToUser")
 }
 
-enum MessageType{
-  IMAGE
-  TEXT
-  VIDEO
-  VOICE 
+model Chat {
+  id                  String          @id @default(uuid()) // UUID as primary key
+  name                String
+  isGroup             Boolean         @default(false) // Indicates if it's a group chat
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  // Relations
+  messages            Message[]       // Messages in this chat
+  memberships         Membership[]    // Users in this chat
 }
 
-model Message{
-  id            String        @id @default(uuid())
-  user          User          @relation(fields: [userId], references: [id])
-  userId        String
-  group         Group?        @relation(fields: [groupId], references: [id])
-  groupId       String?
-  chat          Chat?         @relation(fields: [chatId], references: [id])
-  chatId        String?
-  type          MessageType     
-  content       String
-  sentAt        DateTime?
-  deliveredAt   DateTime?
-  SeenAt        DateTime?
- }
+model Membership {
+  id                  String          @id @default(uuid()) // UUID as primary key
+  userId              String          // UUID
+  chatId              String          // UUID
+  role                String          // Role in chat (e.g., admin, member)
 
-model Group{
-  id             String        @id @default(uuid())
-  name           String
-  description    String?
-  profilePic     String        @default("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png")
-  message        Message[]
-  userGroups     User_Groups[]
+  // Relations
+  user                User            @relation(fields: [userId], references: [id])
+  chat                Chat            @relation(fields: [chatId], references: [id])
+
+  @@unique([userId, chatId]) 
 }
 
-model Chat{
-  id             String       @id @default(uuid())
-  name           String?
-  message        Message[]
-  userChat       User_Chats[]
+model Message {
+  id                  String          @id @default(uuid()) // UUID as primary key
+  content             String?        
+  mediaUrl            String?        
+  messageType         String          // Type of message (e.g., text, image, video)
+  createdAt           DateTime        @default(now())
+  deletedAt           DateTime?      
+  readByAll           Boolean         @default(false)
+
+  // Relations
+  senderId            String          
+  sender              User            @relation("SentMessages", fields: [senderId], references: [id])
+
+  // For direct messages
+  recipientId         String?         
+  recipient           User?           @relation("ReceivedMessages", fields: [recipientId], references: [id])
+
+  // For group messages
+  chatId              String?         
+  chat                Chat?           @relation(fields: [chatId], references: [id])
+
+  // For message replies
+  replyToId           String?
+  replyTo             Message?        @relation("MessageReplies", fields: [replyToId], references: [id])
+  replies             Message[]       @relation("MessageReplies")
+
+  // Message statuses
+  statuses            MessageStatus[]
+
+  @@index([chatId]) 
+  @@index([senderId]) 
+  @@index([recipientId])
+  @@index([createdAt]) 
 }
 
-model User_Chats{
-  id             String       @id @default(uuid())
-  user           User         @relation(fields: [userId], references: [id])
-  userId         String
-  chat           Chat         @relation(fields: [chatId], references: [id])
-  chatId         String
-  contactName    String
-  contactId      String
+model MessageStatus {
+  id                  String          @id @default(uuid()) // UUID as primary key
+  messageId           String          
+  message             Message         @relation(fields: [messageId], references: [id])
+  userId              String          
+  user                User            @relation(fields: [userId], references: [id])
+  status              String          @default("PENDING")
+  createdAt           DateTime        @default(now())
+
+  @@unique([messageId, userId]) 
+  @@index([status]) 
 }
 
-model User_Groups{
-  id              String      @id @default(uuid())
-  group           Group       @relation(fields: [groupId], references: [id])
-  groupId         String
-  user            User        @relation(fields: [userId], references: [id])
-  userId          String
+model FriendRequest {
+  id                  String          @id @default(uuid()) // UUID as primary key
+  senderId            String          
+  receiverId          String          
+  createdAt           DateTime        @default(now())
+  status              String          @default("PENDING") 
+
+  // Relations
+  sender              User            @relation("Sender", fields: [senderId], references: [id])
+  receiver            User            @relation("Receiver", fields: [receiverId], references: [id])
+
+  @@unique([senderId, receiverId]) 
 }
 
+model Friendship {
+  id                  String          @id @default(uuid()) // UUID as primary key
+  userId              String          
+  friendId            String          
+  createdAt           DateTime        @default(now())
 
- model User_Friends{
-  id              String     @id @default(uuid())
-  user1           String     
-  user2           String
- }
+  // Relations
+  user                User            @relation("UserToFriends", fields: [userId], references: [id])
+  friend              User            @relation("FriendsToUser", fields: [friendId], references: [id])
 
+  @@unique([userId, friendId])
+}
