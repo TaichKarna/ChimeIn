@@ -3,7 +3,7 @@ import { io } from 'socket.io-client';
 
 const token = getTokenSync();
 
-export const socket = io("http://192.168.29.112:3000", {
+export const socket = io("http://192.168.29.191:3000", {
     auth: {
         token: token
     },

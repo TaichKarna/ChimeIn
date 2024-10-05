@@ -1,8 +1,6 @@
-import { View,  TouchableOpacity, Image, Pressable} from "react-native";
+import { View,   Image, Pressable} from "react-native";
 import { ThemedText } from "@/components/ThemedText";
-import { router } from "expo-router";
-import { COLORS, SIZES } from "@/constants/theme";
-import { colorUtils } from "@/hooks/getColors";
+import { COLORS } from "@/constants/theme";
 import { Entypo } from "@expo/vector-icons";
 
 
@@ -57,7 +55,7 @@ export default function FriendRequestList({item, index, handleRequest} : any){
                     <View style={{
                     }}>
                         <Pressable
-                            onPress={() => handleRequest(item, 'ACCEPTED')}
+                            onPress={() => handleRequest({requestId: item.id, status:'ACCEPTED'})}
                         >
                             <ThemedText>
                                 <Entypo name="check" size={26} color={COLORS.accentSuccess}/>
@@ -68,7 +66,7 @@ export default function FriendRequestList({item, index, handleRequest} : any){
 
                     }}>
                         <Pressable 
-                            onPress={() => handleRequest(item, 'REJECTED')}
+                            onPress={() => handleRequest({requestId: item.id, status: 'REJECTED'})}
                         >
                             <ThemedText>
                                 <Entypo name="cross" size={28} color={COLORS.accentDanger}/>

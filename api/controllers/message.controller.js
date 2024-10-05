@@ -1,50 +1,60 @@
-const errorHandler = require('../utils/error')
-const {prisma} = require('../utils/prisma')
+const { errorHandler } = require('../utils/error')
+const { prisma } = require('../utils/prisma')
 
 
-const createMessage = async (req, res, next) => {
-    if(!req.user){
-        return next(errorHandler(401, "Unathorized"))
+const getMessagesByChatId = async (req, res, next) => {
+  const { chatId } = req.params;
+  const { page = 1, limit = 20 } = req.query; 
+  const userId = req.user.id; 
+
+  try {
+    const chatMembership = await prisma.chat.findFirst({
+      where: {
+        id: chatId,
+       memberships : { some: { userId } },
+      },
+    });
+
+    if (!chatMembership) {
+      return next(errorHandler(403, "Not authorized to access these chats messages"));
     }
 
-    if( !req.body.content || !req.body.type){
-        return next(errorHandler(400, "Please provide all data"))
-    }
+    const messages = await prisma.message.findMany({
+      where: { chatId },
+      orderBy: { createdAt: 'desc' },
+      take: parseInt(limit), 
+      skip: (parseInt(page) - 1) * parseInt(limit), 
+      include: {
+        sender: {
+          select: { id: true, username: true, profilePicture: true },
+        }, 
+        statuses: true, 
+        replies: true, 
+      },
+    });
+
+    const transformedMessages = messages.map((message) => ({
+      _id: message.id,
+      text: message.content,
+      createdAt: message.createdAt,
+      user: {
+        _id: message.sender.id,
+        name: message.sender.username,
+        avatar: message.sender.profilePicture, 
+      },
+    }));
+
+    return res.status(200).json(transformedMessages);
 
 
-    try{
-        const newMessage = await prisma.message.create({
-            data: {userId: req.user.id, ...req.body}
-        })
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+    return next(errorHandler(500, 'Error fetching message'));
+  }
+};
 
-        res.status(200).json(newMessage)
-
-    } catch (error){
-        next(error)
-    }
-}
+module.exports = {
+  getMessagesByChatId,
+};
 
 
-const getMessages = async (req, res, next) => {
-    if(!req.user){
-        return next(errorHandler(401, "Unathorized"))
-    }
-
-    if( !req.body.groupId && !req.body.chatId){
-        return next(errorHandler(400, "Please provide either chat or group id"))
-    }
-
-
-    try{
-        const newMessage = await prisma.message.findMany({
-            where: {userId: req.user.id, ...req.body}
-        })
-
-        res.status(200).json(newMessage)
-
-    } catch (error){
-        next(error)
-    }
-}
-
-module.exports = {createMessage, getMessages}

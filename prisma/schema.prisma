@@ -18,8 +18,7 @@ model User {
   updatedAt           DateTime        @updatedAt
 
   // Relations
-  sentMessages        Message[]       @relation("SentMessages")
-  receivedMessages    Message[]       @relation("ReceivedMessages")
+  messages        Message[]       @relation("SentMessages")
   memberships         Membership[]    
   messageStatuses     MessageStatus[]
   sentFriendRequests   FriendRequest[] @relation("Sender")
@@ -64,34 +63,25 @@ model Message {
   deletedAt           DateTime?      
   readByAll           Boolean         @default(false)
 
-  // Relations
   senderId            String          
   sender              User            @relation("SentMessages", fields: [senderId], references: [id])
 
-  // For direct messages
-  recipientId         String?         
-  recipient           User?           @relation("ReceivedMessages", fields: [recipientId], references: [id])
-
-  // For group messages
   chatId              String?         
   chat                Chat?           @relation(fields: [chatId], references: [id])
 
-  // For message replies
   replyToId           String?
   replyTo             Message?        @relation("MessageReplies", fields: [replyToId], references: [id])
   replies             Message[]       @relation("MessageReplies")
 
-  // Message statuses
   statuses            MessageStatus[]
 
   @@index([chatId]) 
   @@index([senderId]) 
-  @@index([recipientId])
   @@index([createdAt]) 
 }
 
 model MessageStatus {
-  id                  String          @id @default(uuid()) // UUID as primary key
+  id                  String          @id @default(uuid()) 
   messageId           String          
   message             Message         @relation(fields: [messageId], references: [id])
   userId              String          

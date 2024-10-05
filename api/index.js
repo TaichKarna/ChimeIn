@@ -5,7 +5,7 @@ const cors = require("cors")
 const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
 const path = require('path')
-
+const {saveMessage} = require('./sockets/messages.utils')
 //routers
 const { authRouter } = require('./routers/auth.router')
 const { userRouter } = require('./routers/user.router')
@@ -55,17 +55,15 @@ const chatRooms = []
 
 io.on('connection', (socket) => {
     console.log(`User connected: ${socket.user.username}`);
-        // Join a chat room
       socket.on('chat room', ({ chatRoom }) => {
         socket.join(chatRoom);
         console.log(`User ${socket.id} joined room: ${chatRoom}`);
     });
 
-    // Listen for incoming chat messages
-    socket.on('chat message', (data) => {
+    socket.on('chat message', async (data) => {
         const { chatRoom, content } = data;
         console.log(`Message received in ${chatRoom}:`, content);
-        // Broadcast the message to the specific room
+        await saveMessage(chatRoom, content);
         socket.to(chatRoom).emit('chat message', content);
     });
 
@@ -75,11 +73,21 @@ io.on('connection', (socket) => {
   });
   
 
+app.use( (req, res, next) => {
+  const currentTime = new Date().toISOString();
+
+  console.log(`[${currentTime}] ${req.method} request to ${req.originalUrl}`);
+  console.log('Query:', req.query);
+  console.log('Body:', req.body);
+
+  next();
+})
+
 app.use('/api/auth', authRouter)
 app.use('/api/user', userRouter)
 app.use('/api/invites', inviteRouter)
-app.use('/api/chat', chatRouter)
-app.use('/api/message', messageRouter)
+app.use('/api/chats', chatRouter)
+app.use('/api/messages', messageRouter)
 app.use('/api/uploads', uploadRouter)
 app.use('/api/friends', friendsRouter)
 
@@ -100,3 +108,7 @@ app.use((err, req, res, next) => {
 server.listen(3000,() => {
     console.log("listening to this server")
 })
+
+
+
+

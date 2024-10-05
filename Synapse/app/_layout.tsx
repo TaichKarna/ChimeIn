@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { QueryClient, QueryClientProvider } from "react-query";
 
-let api_url = "http://192.168.29.112:3000/api"
+let api_url = "http://192.168.29.191:3000/api"
 
 export { api_url }
 

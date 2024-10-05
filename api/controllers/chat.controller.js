@@ -1,8 +1,7 @@
 const { errorHandler } = require('../utils/error');
 const { prisma } = require('../utils/prisma');
 
-// Create a chat
-const createChat = async (req, res, next) => {
+const createGroupChat = async (req, res, next) => {
     if (!req.user) {
         return next(errorHandler(401, "Unauthorized"));
     }
@@ -16,7 +15,7 @@ const createChat = async (req, res, next) => {
                 memberships: {
                     create: members.map((memberId) => ({
                         userId: memberId,
-                        role: 'member', // Default role
+                        role: 'member', 
                     })),
                 },
             },
@@ -27,31 +26,163 @@ const createChat = async (req, res, next) => {
     }
 };
 
-// Get chat by ID
+const createChat = async (req, res, next) => {
+    if (!req.user) {
+        return next(errorHandler(401, "Unauthorized"));
+    }
+    const { name, members } = req.body;
+
+    if (!Array.isArray(members) || members.length !== 2) {
+        return next(errorHandler(400, "Chat creation requires exactly two members"));
+    }
+
+    try {
+        const existingChat = await prisma.chat.findFirst({
+            where: {
+                memberships: {
+                    every: {
+                        userId: {
+                            in: members,
+                        },
+                    },
+                },
+            }
+        });
+
+        if (existingChat) {
+            return res.status(200).json(existingChat);
+        }
+
+        const chat = await prisma.chat.create({
+            data: {
+                name,
+                memberships: {
+                    create: members.map((memberId) => ({
+                        userId: memberId,
+                        role: 'member',
+                    })),
+                },
+            },
+            });
+
+
+
+        res.status(201).json(chat);
+    } catch (error) {
+        console.log(error)
+        return next(errorHandler(500, 'Error creating chat'));
+    }
+};
+
+
+
+const getAllChats = async (req, res) => {
+    const userId = req.user.id; 
+    try {
+        const chats = await prisma.chat.findMany({
+            where: {
+                memberships: {
+                    some: {
+                        userId: userId,
+                    },
+                },
+            },
+            include: {
+                memberships: {
+                    where: {
+                        userId: {
+                            not: userId, 
+                        },
+                    },
+                    include: {
+                        user: {
+                            select: {
+                                id: true,
+                                profilePicture: true,
+                                displayName: true,
+                                username: true,
+                            },
+                        },
+                    },
+                },
+                messages: {
+                    orderBy: {
+                        createdAt: 'desc', 
+                    },
+                    take: 1, 
+                },
+            },
+        });
+
+        const formattedChats = chats.map(chat => ({
+            id: chat.id,
+            name: chat.name,
+            isGroup: chat.isGroup,
+            createdAt: chat.createdAt,
+            updatedAt: chat.updatedAt,
+            latestMessage: chat.messages.length > 0 ? chat.messages[0] : null, 
+            otherUser: chat.memberships.length > 0 ? chat.memberships[0].user : null, 
+        }));
+
+        res.status(200).json(formattedChats);
+    } catch (error) {
+        console.error('Error fetching chats:', error);
+        return next(errorHandler(500, 'Error retrieving chats'));
+
+    }
+};
+
 const getChatById = async (req, res, next) => {
     const { chatId } = req.params;
+    const { userId } = req.user;
 
     try {
         const chat = await prisma.chat.findUnique({
             where: { id: chatId },
-            include: { memberships: true, messages: true }, // Include related data
-        });
+            include: { 
+                memberships: {
+                    include: {
+                        user: {
+                            select: {
+                                id: true,
+                                profilePicture: true,
+                                displayName: true,
+                                username: true,
+                            },
+                        },
+                    },
+                },
+                messages: {
+                    orderBy: {
+                        createdAt: 'desc', 
+                    },
+                    take: 20, 
+            },
+        }
+    });
 
         if (!chat) {
             return next(errorHandler(404, 'Chat not found'));
         }
 
-        res.status(200).json(chat);
+        const otherMember = chat.memberships
+            .map(membership => membership.user)
+            .find(member => member.id !== userId);
+
+        res.status(200).json({
+            chatId: chat.id,
+            otherMember,
+            messages: chat.messages, 
+        })
     } catch (error) {
         return next(errorHandler(500, 'Error retrieving chat'));
     }
 };
 
-// Add a member to a chat (only admin can do this)
+
 const addMemberToChat = async (req, res, next) => {
     const { chatId, memberId } = req.body;
 
-    // Check if the user is an admin of the chat
     const membership = await prisma.membership.findUnique({
         where: {
             chatId_userId: {
@@ -79,7 +210,6 @@ const addMemberToChat = async (req, res, next) => {
     }
 };
 
-// Remove a member from a chat (only admin can do this)
 const removeMemberFromChat = async (req, res, next) => {
     const { chatId, memberId } = req.body;
 
@@ -173,4 +303,5 @@ module.exports = {
     removeMemberFromChat,
     promoteMemberToAdmin,
     leaveChat,
+    getAllChats
 };
