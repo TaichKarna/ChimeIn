@@ -50,6 +50,21 @@ export default function Chat() {
         }
     }, [chatMessages]);
 
+
+    useEffect(() => {
+
+        const handleDisconnect = () => {
+            queryClient.invalidateQueries( ['chatMessages', chatId, page])
+        };
+
+        socket.on('disconnect', handleDisconnect);
+
+        // return () => {
+        //     socket.off('disconnect', handleDisconnect);
+        // };
+    }, []); 
+
+
     const loadMoreMessages = () => {
         setPage((prevPage) => prevPage + 1);
     };

@@ -58,7 +58,7 @@ export default function Index() {
             </ThemedText>
             <View style={{width: "100%", paddingHorizontal: SIZES.padding3}}>
                 <Button title="Start Messaging"
-                onPress={ () => router.navigate("/home/(tabs)/friends")}
+                onPress={ () => router.navigate("/auth/signup")}
                 style={{
                     width: "100%",
                     alignItems:"center",

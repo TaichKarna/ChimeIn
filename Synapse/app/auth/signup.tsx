@@ -10,6 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { colorUtils } from "@/hooks/getColors";
 import { ThemedInput } from '@/components/ThemedInput';
 import { api_url } from "../_layout";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 interface UserData {
     username: string;
@@ -31,7 +32,7 @@ export default function Signup() {
     });
 
     const [errors, setErrors] = useState<FormErrors>({});
-    const backgroundColor = colorUtils.backgroundColor();
+    const backgroundColor = useThemeColor({},'background');
 
     const validateInputs = (): boolean => {
         const newErrors: FormErrors = {};
