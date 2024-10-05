@@ -1,8 +1,8 @@
 # ChimeIn
 
-**ChimeIn** is a real-time messaging application built with **React Native** on the frontend and **Node.js**, **Express**, **PostgreSQL**, and **Prisma** on the backend. The app supports both group and individual messaging, offline message storage, and real-time updates using **Socket.IO**. It also leverages **React Query** to manage server-side data fetching and caching.
+**ChimeIn** is a real-time messaging application built with **React Native** on client side and **Node.js**, **Express**, **PostgreSQL**, and **Prisma** on the backend. The app supports both group and individual messaging, offline message storage, and real-time updates using **Socket.IO**. It also leverages **React Query** to manage server-side data fetching and caching.
 
-![ChimeIn Logo](![image](https://github.com/user-attachments/assets/6ec8076d-85c5-41e4-adc7-3d2197dae2fa))
+![ChimeIn Logo](https://github.com/user-attachments/assets/6ec8076d-85c5-41e4-adc7-3d2197dae2fa)
 
 ## Features
 
