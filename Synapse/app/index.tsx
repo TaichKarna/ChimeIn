@@ -10,6 +10,6 @@ export default function App(){
          return <Redirect href="/home/(tabs)/chats"/>
     } 
     
-    return <Redirect href="/home/(tabs)/chats"/>
+    return <Redirect href="/home/(tabs)/chats/"/>
     
 }

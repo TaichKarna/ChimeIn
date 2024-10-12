@@ -15,6 +15,7 @@ const { messageRouter } = require('./routers/message.router')
 const { uploadRouter } = require('./routers/upload.router')
 const { friendsRouter } = require('./routers/friends.router')
 const { getUserFriends } = require('./sockets/getFriendsList')
+const { initSocket } = require('./sockets/socket')
 
 const app = express();
 const server = createServer(app);
@@ -26,51 +27,14 @@ const io = new Server(server, {
     }
 });
 
+initSocket(io);
 
 const __location = path.resolve();
 app.use(express.json())
 app.use(cookieParser())
 app.use(express.urlencoded())
 
-io.use((socket, next) => {
-    const token = socket.handshake.auth.token;
-    if (!token) {
-      return next(new Error('Unauthorized'));
-    }
 
-    jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, user) => {
-      if (err) return next(new Error('Unauthorized'));
-      const friends = await getUserFriends(user.id)
-
-      socket.user = {
-        id: user.id,
-        username: user.username,
-        friends
-      }
-      next();
-    });
-  });
-  
-const chatRooms = []
-
-io.on('connection', (socket) => {
-    console.log(`User connected: ${socket.user.username}`);
-      socket.on('chat room', ({ chatRoom }) => {
-        socket.join(chatRoom);
-        console.log(`User ${socket.id} joined room: ${chatRoom}`);
-    });
-
-    socket.on('chat message', async (data) => {
-        const { chatRoom, content } = data;
-        console.log(`Message received in ${chatRoom}:`, content);
-        await saveMessage(chatRoom, content);
-        socket.to(chatRoom).emit('chat message', content);
-    });
-
-    socket.on('disconnect', () => {
-      console.log('User disconnected');
-    });
-  });
   
 
 app.use( (req, res, next) => {

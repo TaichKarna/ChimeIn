@@ -3,17 +3,19 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons, Fontisto, Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { GiftedChat, InputToolbar } from "react-native-gifted-chat";
-import { socket } from "../../sockets/socket";
+import { GiftedChat, IMessage } from "react-native-gifted-chat";
 import { useCallback, useEffect, useState, useMemo } from "react";
 import { ThemedView } from "@/components/ThemedView";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { ThemedText } from "@/components/ThemedText";
 import { renderActions, renderComposer, renderInputToolbar, renderSend } from "@/components/ChatInput";
 import { getUserData } from "@/store/userData";
-import {  useQuery, useQueryClient } from "react-query";
-import {  fetchAllChats } from "@/queries/chatApi";
+import { useQuery, useQueryClient } from "react-query";
+import { fetchAllChats } from "@/queries/chatApi";
 import { fetchChatMessages } from "@/queries/messageApi"; 
+import useSendMessage from "@/hooks/useSendMessage"; // Import the sendMessage hook
+import useAppStore from "@/store/zustand/appStore";
+import { useStore } from "zustand";
 
 export const useChatDetails = (chatId: any, page: number, limit: number) => {
     return useQuery(
@@ -28,78 +30,54 @@ export const useChatDetails = (chatId: any, page: number, limit: number) => {
 };
 
 export default function Chat() {
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState<IMessage[]>([]);
     const [text, setText] = useState("");
     const { chatId } = useLocalSearchParams();
     const textClr = useThemeColor({}, 'text');
     const chatBg = useThemeColor({}, 'chatBg');
-    const [user, setUser] = useState("");
+    const user = useAppStore(state => state.user);
     const [page, setPage] = useState(1); 
     const [limit] = useState(20); 
     const { data: chats, isLoading, isError } = useQuery(['chats'], fetchAllChats, {
         refetchOnWindowFocus: false, refetchOnMount: false
     }) ;
     const chat = useMemo(() => chats?.find((chat : any) => chat.id === chatId), [chats, chatId]);
-
-    const { data: chatMessages, isLoading: isLoadingChat } = useChatDetails(chatId, page, limit);
-    const queryClient = useQueryClient();
     
+    const getAllMessages= useAppStore(state => state.getMessages);
+    // const { data: chatMessages, isLoading: isLoadingChat } = useChatDetails(chatId, page, limit);
+    // const queryClient = useQueryClient();
+    const sendMessage = useSendMessage(); 
+
+    // useEffect(() => {
+    //     if (chatMessages) {
+    //         setMessages((prev) => GiftedChat.append(chatMessages, prev));
+    //     }
+    // }, [chatMessages]);
     useEffect(() => {
-        if (chatMessages) {
-            setMessages((prev) => GiftedChat.append(chatMessages, prev));
-        }
-    }, [chatMessages]);
 
-
-    useEffect(() => {
-
-        const handleDisconnect = () => {
-            queryClient.invalidateQueries( ['chatMessages', chatId, page])
-        };
-
-        socket.on('disconnect', handleDisconnect);
-
-        // return () => {
-        //     socket.off('disconnect', handleDisconnect);
-        // };
-    }, []); 
-
+        const messages = getAllMessages(chatId);
+        setMessages((prev) => GiftedChat.append(prev, messages));
+        const unsubscribe = useAppStore.subscribe(
+            ({messages}) => {
+                console.log(messages)
+              setMessages(prev => GiftedChat.append(prev, messages)); // Update the local state when messages change globally
+            },
+            (state) => state.chatRooms[chatId]?.messages || [] 
+          );
+    },[])
 
     const loadMoreMessages = () => {
         setPage((prevPage) => prevPage + 1);
     };
 
-    useEffect(() => {
-        const getUser = async() => {
-            const user = await getUserData();
-            setUser(user);
-        }
-        getUser();
-
-        socket.emit('chat room', { chatRoom: chatId });
-
-        const messageListener = (message : any) => {
-            setMessages((prev) => GiftedChat.append(prev, message));
-        };
-
-        socket.on('chat message', messageListener);
-        return () => {
-            socket.off('chat message', messageListener); 
-        };
-    }, [chatId]);
 
     const onSend = useCallback((newMessages = []) => {
+        const message = newMessages[0];
         setMessages((prev) => GiftedChat.append(prev, newMessages));
         setText(""); 
-
-        const messageToSend = {
-            content: {
-                ...newMessages[0],
-            },
-            chatRoom: chatId,
-        };
-        socket.emit('chat message', messageToSend);
-    }, [user, chatId]); 
+    
+        sendMessage(chat, message);
+    }, [user, chatId, sendMessage]);
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -139,7 +117,6 @@ export default function Chat() {
                 maxComposerHeight={60}
                 minComposerHeight={40}
                 minInputToolbarHeight={36}
-       
                 listViewProps={{
                     onEndReachedThreshold: 0.3, 
                     onEndReached: () => loadMoreMessages(),

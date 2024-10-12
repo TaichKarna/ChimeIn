@@ -16,6 +16,7 @@ import { getUserData } from "@/store/userData";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { createChat, fetchAllChats } from "@/queries/chatApi";
 import { fetchFriends } from "@/queries/friendsApi";
+import { useSocket } from "@/sockets/useSocket";
 
 const fetchFriendRequests = async () => {
   const { id } = await getUserData();
@@ -39,7 +40,7 @@ export default function Friends() {
   const lineClr = useThemeColor({}, 'line');
   const [search, setSearch] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-
+  const  { onlineUsers } = useSocket();
   const queryClient = useQueryClient();
 
 
@@ -145,7 +146,7 @@ export default function Friends() {
             padding: 4,
           }}
         >
-          {item.isOnline && (
+          { onlineUsers && onlineUsers.includes(item.friend.id) && (
             <View
               style={{
                 height: 15,
