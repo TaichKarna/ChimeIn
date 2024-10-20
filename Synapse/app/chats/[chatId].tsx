@@ -9,13 +9,11 @@ import { ThemedView } from "@/components/ThemedView";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { ThemedText } from "@/components/ThemedText";
 import { renderActions, renderComposer, renderInputToolbar, renderSend } from "@/components/ChatInput";
-import { getUserData } from "@/store/userData";
 import { useQuery, useQueryClient } from "react-query";
 import { fetchAllChats } from "@/queries/chatApi";
 import { fetchChatMessages } from "@/queries/messageApi"; 
 import useSendMessage from "@/hooks/useSendMessage"; // Import the sendMessage hook
 import useAppStore from "@/store/zustand/appStore";
-import { useStore } from "zustand";
 
 export const useChatDetails = (chatId: any, page: number, limit: number) => {
     return useQuery(
@@ -30,54 +28,67 @@ export const useChatDetails = (chatId: any, page: number, limit: number) => {
 };
 
 export default function Chat() {
-    const [messages, setMessages] = useState<IMessage[]>([]);
+    const getGlobalMessages = useAppStore(state => state.getMessages);
     const [text, setText] = useState("");
-    const { chatId } = useLocalSearchParams();
+    const { chatId } : { chatId: string } = useLocalSearchParams();
+    const [messages, setMessages] = useState<IMessage[]>([]);
     const textClr = useThemeColor({}, 'text');
     const chatBg = useThemeColor({}, 'chatBg');
     const user = useAppStore(state => state.user);
     const [page, setPage] = useState(1); 
     const [limit] = useState(20); 
-    const { data: chats, isLoading, isError } = useQuery(['chats'], fetchAllChats, {
-        refetchOnWindowFocus: false, refetchOnMount: false
-    }) ;
-    const chat = useMemo(() => chats?.find((chat : any) => chat.id === chatId), [chats, chatId]);
+
+    const { data: chats } = useQuery(['chats'], fetchAllChats, {
+        refetchOnWindowFocus: false, 
+        refetchOnMount: false
+    });
     
-    const getAllMessages= useAppStore(state => state.getMessages);
-    // const { data: chatMessages, isLoading: isLoadingChat } = useChatDetails(chatId, page, limit);
-    // const queryClient = useQueryClient();
-    const sendMessage = useSendMessage(); 
+    const chat = useMemo(() => chats?.find((chat: any) => chat.id === chatId), [chats, chatId]);
 
-    // useEffect(() => {
-    //     if (chatMessages) {
-    //         setMessages((prev) => GiftedChat.append(chatMessages, prev));
-    //     }
-    // }, [chatMessages]);
+    const { addMessages } = useAppStore(); 
+    const { data: chatMessages } = useChatDetails(chatId, page, limit);
+
     useEffect(() => {
+        if (chatMessages) {
+            addMessages(chatId, chatMessages);
+        }
+    }, [chatMessages, addMessages, chatId]);
 
-        const messages = getAllMessages(chatId);
-        setMessages((prev) => GiftedChat.append(prev, messages));
+    const queryClient = useQueryClient();
+
+    useEffect(() => {
+        return () => {
+            queryClient.invalidateQueries(['chatMessages', chatId]);
+        };
+    }, [chatId, queryClient]);
+
+
+    useEffect(() => {
         const unsubscribe = useAppStore.subscribe(
-            ({messages}) => {
-                console.log(messages)
-              setMessages(prev => GiftedChat.append(prev, messages)); // Update the local state when messages change globally
+            ({ chatRooms }) => {
+                const updatedMessages = chatRooms[chatId]?.messages || [];
+                const sortedMessages = updatedMessages.sort((a: IMessage, b: IMessage) => {
+                    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                });
+                setMessages(sortedMessages); 
             },
-            (state) => state.chatRooms[chatId]?.messages || [] 
-          );
-    },[])
+            (state) => state.chatRooms[chatId]?.messages || []
+        );
+
+        return () => unsubscribe(); // Clean up subscription on unmount
+    }, [chatId]);
 
     const loadMoreMessages = () => {
-        setPage((prevPage) => prevPage + 1);
+        setPage(prevPage => prevPage + 1);
     };
 
+    const sendMessage = useSendMessage(); 
 
     const onSend = useCallback((newMessages = []) => {
         const message = newMessages[0];
-        setMessages((prev) => GiftedChat.append(prev, newMessages));
-        setText(""); 
-    
-        sendMessage(chat, message);
-    }, [user, chatId, sendMessage]);
+        setText("");     
+        sendMessage(chat, message); // This will also update the global store
+    }, [sendMessage, chat]);
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -90,7 +101,7 @@ export default function Chat() {
                         >
                             <MaterialIcons name="keyboard-arrow-left" size={24} color={textClr} />
                         </TouchableOpacity>
-                        <ThemedText type="sh1">{chat.otherUser.displayName}</ThemedText>
+                        <ThemedText type="sh1">{chat?.otherUser?.displayName}</ThemedText>
                     </View>
                     <View style={styles.headerRow}>
                         <TouchableOpacity style={styles.iconButton} onPress={() => router.navigate("/home/(tabs)/chats")}>
@@ -119,7 +130,7 @@ export default function Chat() {
                 minInputToolbarHeight={36}
                 listViewProps={{
                     onEndReachedThreshold: 0.3, 
-                    onEndReached: () => loadMoreMessages(),
+                    onEndReached: loadMoreMessages,
                 }}
             />
         </SafeAreaView>

@@ -11,7 +11,6 @@ const useSendMessage = () => {
     const addMessage = useAppStore((state) => state.addMessage);
     const token = useAppStore((state) => state.token);
     const {socket} = useSocket();
-    const  user  = useAppStore(state => state.user)
     
     const { mutate: sendMessage } = useMutation(
         async ({ chat, message }: { chat: any; message: IMessage }) => {

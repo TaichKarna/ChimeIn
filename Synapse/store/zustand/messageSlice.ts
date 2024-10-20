@@ -26,6 +26,10 @@ export interface ChatSlice {
   clearRoom: (chatId: string) => void;
 }
 
+const sortMessagesDescending = (messages: IMessage[]) => {
+  return messages.sort((a, b) => (b.createdAt as number) - (a.createdAt as number));
+};
+
 export const createChatSlice = (set: any, get: any): ChatSlice => ({
   chatRooms: {},
 
@@ -37,12 +41,14 @@ export const createChatSlice = (set: any, get: any): ChatSlice => ({
         const messageExists = existingRoom.messages.some((msg) => msg._id === message._id);
 
         if (!messageExists) {
+          // Append new message and sort
+          const updatedMessages = sortMessagesDescending([...existingRoom.messages, message]);
           return {
             chatRooms: {
               ...state.chatRooms,
               [chatId]: {
                 ...existingRoom,
-                messages: [...existingRoom.messages, message],
+                messages: updatedMessages,
               },
             },
           };
@@ -53,7 +59,7 @@ export const createChatSlice = (set: any, get: any): ChatSlice => ({
             ...state.chatRooms,
             [chatId]: {
               roomId: chatId,
-              messages: [message],
+              messages: [message], // Start with the new message
             },
           },
         };
@@ -72,12 +78,15 @@ export const createChatSlice = (set: any, get: any): ChatSlice => ({
           (msg) => !existingRoom.messages.some((existingMsg) => existingMsg._id === msg._id)
         );
 
+        // Combine new messages with existing ones and sort
+        const updatedMessages = sortMessagesDescending([...existingRoom.messages, ...newMessages]);
+
         return {
           chatRooms: {
             ...state.chatRooms,
             [chatId]: {
               ...existingRoom,
-              messages: [...existingRoom.messages, ...newMessages],
+              messages: updatedMessages,
             },
           },
         };
@@ -87,7 +96,7 @@ export const createChatSlice = (set: any, get: any): ChatSlice => ({
             ...state.chatRooms,
             [chatId]: {
               roomId: chatId,
-              messages,
+              messages: sortMessagesDescending(messages), // Store new messages sorted
             },
           },
         };

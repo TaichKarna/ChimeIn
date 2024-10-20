@@ -76,7 +76,7 @@ const createChat = async (req, res, next) => {
 
 
 
-const getAllChats = async (req, res) => {
+const getAllChats = async (req, res, next) => {
     const userId = req.user.id; 
     try {
         const chats = await prisma.chat.findMany({

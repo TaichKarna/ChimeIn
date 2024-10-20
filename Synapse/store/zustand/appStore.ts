@@ -9,11 +9,10 @@ import { createUserSlice, UserSlice } from './userSlice';
 export type AppStore = ChatSlice & CurrentChatRoomSlice & TokenSlice & UserSlice; 
 
 
-const useAppStore = create<AppStore>((set, get) => ({
-    ...createChatSlice(set, get),
-    ...createCurrentChatRoomSlice(set),
-    ...createTokenSlice(set),
-    ...createUserSlice(set)
-  }));
-  
+const useAppStore = create<AppStore>()((set, get) => ({
+  ...createChatSlice(set, get),
+  ...createCurrentChatRoomSlice(set),
+  ...createTokenSlice(set),
+  ...createUserSlice(set),
+}));
   export default useAppStore;

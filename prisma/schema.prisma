@@ -16,7 +16,7 @@ model User {
   profilePicture      String?         // Profile picture URL (optional)
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
-
+  
   // Relations
   messages        Message[]       @relation("SentMessages")
   memberships         Membership[]    

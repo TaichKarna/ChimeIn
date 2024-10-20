@@ -5,7 +5,6 @@ const { prisma } = require('../utils/prisma')
 const sendMessage = async (req, res, next) => {
     const { text, user, createdAt, _id } = req.body;
     const { chatId } = req.params;
-    console.log(text, user, createdAt, _id)
     const chatMembership = await prisma.chat.findFirst({
       where: {
         id: chatId,
@@ -29,7 +28,7 @@ const sendMessage = async (req, res, next) => {
         },
       });
       
-      return res.status(200).json(savedMessage);
+      return res.status(200).json({text, user, createdAt, _id});
       
     } catch (error) {
         console.log(error)
